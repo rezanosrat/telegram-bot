@@ -9,6 +9,12 @@ from aiogram.utils import executor
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
+# بررسی اینکه توکن‌ها مقدار دارند یا نه
+if not TOKEN:
+    raise ValueError("🚨 خطا: `TELEGRAM_BOT_TOKEN` مقدار ندارد! لطفاً متغیر محیطی را تنظیم کنید.")
+if not OPENAI_API_KEY:
+    raise ValueError("🚨 خطا: `OPENAI_API_KEY` مقدار ندارد! لطفاً متغیر محیطی را تنظیم کنید.")
+
 # مقداردهی اولیه ربات
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
@@ -66,4 +72,5 @@ async def handle_audio(message: types.Message):
             os.remove(local_file)
 
 if __name__ == "__main__":
+    logging.info("🚀 Bot is starting...")
     executor.start_polling(dp, skip_updates=True)
