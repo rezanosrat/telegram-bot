@@ -5,9 +5,9 @@ import requests
 from aiogram import Bot, Dispatcher, types
 from aiogram.utils import executor
 
-# دریافت توکن‌ها از متغیرهای محیطی برای امنیت بیشتر
-TOKEN = os.getenv("TOKEN")
-SPEECHMATICS_API_KEY = os.getenv("SPEECHMATICS_API_KEY")
+# تنظیمات توکن و API Key
+TOKEN = "7653169627:AAGQWygfb1ADM-QmlpFkZIv9wPnHZ1AApzE"
+SPEECHMATICS_API_KEY = "gnvvKVKKycDpWpxLHsu7Pl5kMrzY184z"
 
 # مقداردهی اولیه ربات
 bot = Bot(token=TOKEN)
@@ -21,16 +21,16 @@ async def send_welcome(message: types.Message):
 
 @dp.message_handler(content_types=[types.ContentType.AUDIO, types.ContentType.VOICE])
 async def handle_audio(message: types.Message):
-    file_id = message.audio.file_id if message.audio else message.voice.file_id
-    file_info = await bot.get_file(file_id)
-    file_path = file_info.file_path
-    file_url = f"https://api.telegram.org/file/bot{TOKEN}/{file_path}"
-
-    await message.reply("✅ فایل دریافت شد! در حال پردازش...")
-
-    local_file = f"temp_{file_id}.ogg"
-
     try:
+        file_id = message.audio.file_id if message.audio else message.voice.file_id
+        file_info = await bot.get_file(file_id)
+        file_path = file_info.file_path
+        file_url = f"https://api.telegram.org/file/bot{TOKEN}/{file_path}"
+
+        await message.reply("✅ فایل دریافت شد! در حال پردازش...")
+
+        local_file = f"temp_{file_id}.ogg"
+
         # دانلود فایل صوتی
         with open(local_file, 'wb') as f:
             f.write(requests.get(file_url).content)
@@ -53,6 +53,7 @@ async def handle_audio(message: types.Message):
                 status_response = requests.get(f"https://asr.api.speechmatics.com/v2/jobs/{job_id}", headers=headers)
                 status_data = status_response.json()
                 progress = status_data.get("progress", 0)
+
                 await message.reply(f"⏳ در حال پردازش... {progress}% تکمیل شده است.")
                 await asyncio.sleep(5)
 
@@ -68,7 +69,7 @@ async def handle_audio(message: types.Message):
             else:
                 await message.reply("❌ مشکلی در پردازش فایل به وجود آمد.")
         else:
-            await message.reply("❌ آپلود فایل به Speechmatics با خطا مواجه شد.")
+            await message.reply(f"❌ خطا در آپلود: {response.status_code} - {response.text}")
 
     except Exception as e:
         await message.reply(f"⚠ خطایی رخ داد: {str(e)}")
