@@ -6,7 +6,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.utils import executor
 
 # دریافت توکن‌ها از متغیرهای محیطی
-TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TOKEN = os.getenv("7653169627:AAGQWygfb1ADM-QmlpFkZIv9wPnHZ1AApzE")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # بررسی اینکه توکن‌ها مقدار دارند یا نه
